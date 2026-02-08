@@ -1,0 +1,73 @@
+﻿<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Классы бетона — виртуальные испытания</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero-meta">
+        <div class="hero-range">Диапазон B10–B90</div>
+      </div>
+      <h1>Интерактивная шкала классов бетона</h1>
+      <p>Выберите класс в таблице, посмотрите ключевые применения и запустите виртуальное испытание на прочность.</p>
+    </header>
+
+    <main class="layout">
+      <section class="grid-panel">
+        <div class="section-title">
+          <h2>Шкала прочности</h2>
+          <span>Нажмите на любой класс</span>
+        </div>
+        <div class="class-grid" id="classGrid" aria-live="polite"></div>
+      </section>
+
+      <aside class="detail-panel" id="detailPanel">
+        <div class="panel-head">
+          <div class="panel-title">Выбранный класс</div>
+          <div class="panel-code" id="detailCode">—</div>
+        </div>
+        <div class="panel-info">
+          <div>
+            <div class="label">Предел прочности</div>
+            <div class="value"><span id="detailStrength">0.0</span> МПа</div>
+          </div>
+          <div>
+            <div class="label">Применение</div>
+            <div class="value" id="detailUse">Выберите класс из таблицы.</div>
+          </div>
+        </div>
+
+        <div class="test-zone">
+          <div class="cube-wrap">
+            <div class="cube stage-intact" id="cube" role="img" aria-label="Состояние куба бетона"></div>
+            <div class="load">
+              <div class="load-value"><span id="loadValue">0.0</span> МПа</div>
+              <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+              </div>
+            </div>
+          </div>
+
+          <button class="primary" id="testButton" type="button" disabled>Протестировать прочность</button>
+          <div class="result" id="result"></div>
+
+          <div class="comparisons" id="comparisons">
+            <div class="trade-panel">
+              <div class="trade-title">Сравнения</div>
+              <div class="trade-list" id="comparisonButtons"></div>
+            </div>
+            <div class="comparison-output" id="comparisonOutput">Выберите сравнение после испытания.</div>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

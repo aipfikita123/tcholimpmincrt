@@ -152,23 +152,23 @@ Object.entries(iconCandidates).forEach(([name, list]) => {
 });
 
 const classDefs = [
-  { b: 10, use: "Подбетонка, подготовительные слои" },
-  { b: 15, use: "Стяжки, дорожки, подушки" },
-  { b: 20, use: "Фундаменты частных домов" },
-  { b: 25, use: "Ленточные фундаменты, плиты" },
-  { b: 30, use: "Монолитные перекрытия, колонны" },
-  { b: 35, use: "Сборные элементы, балки" },
-  { b: 40, use: "Мосты, парковки, промполы" },
-  { b: 45, use: "Гидротехнические сооружения" },
-  { b: 50, use: "Аэродромные покрытия" },
-  { b: 55, use: "Высотные ядра и опоры" },
-  { b: 60, use: "Небоскребы, высокие нагрузки" },
-  { b: 65, use: "Промышленные платформы, эстакады" },
-  { b: 70, use: "Спецсооружения, защитные оболочки" },
-  { b: 75, use: "Опорные элементы мостов" },
-  { b: 80, use: "Особопрочные конструкции" },
-  { b: 85, use: "Усиленные спецобъекты" },
-  { b: 90, use: "Экстремальные нагрузки" },
+  { b: 10, use: "Подбетонка, подготовительные слои", frost: "Базовая", water: "Низкая", workability: "Жесткая" },
+  { b: 15, use: "Стяжки, дорожки, подушки", frost: "Базовая", water: "Низкая", workability: "Жесткая" },
+  { b: 20, use: "Фундаменты частных домов", frost: "Стандартная", water: "Умеренная", workability: "Пластичная" },
+  { b: 25, use: "Ленточные фундаменты, плиты", frost: "Стандартная", water: "Умеренная", workability: "Пластичная" },
+  { b: 30, use: "Монолитные перекрытия, колонны", frost: "Повышенная", water: "Повышенная", workability: "Подвижная" },
+  { b: 35, use: "Сборные элементы, балки", frost: "Повышенная", water: "Повышенная", workability: "Подвижная" },
+  { b: 40, use: "Мосты, парковки, промполы", frost: "Высокая", water: "Высокая", workability: "Высокоподвижная" },
+  { b: 45, use: "Гидротехнические сооружения", frost: "Высокая", water: "Высокая", workability: "Высокоподвижная" },
+  { b: 50, use: "Аэродромные покрытия", frost: "Высокая", water: "Высокая", workability: "Высокоподвижная" },
+  { b: 55, use: "Высотные ядра и опоры", frost: "Очень высокая", water: "Очень высокая", workability: "Высокоподвижная" },
+  { b: 60, use: "Небоскребы, высокие нагрузки", frost: "Очень высокая", water: "Очень высокая", workability: "Высокоподвижная" },
+  { b: 65, use: "Промышленные платформы, эстакады", frost: "Экстремальная", water: "Экстремальная", workability: "Литая" },
+  { b: 70, use: "Спецсооружения, защитные оболочки", frost: "Экстремальная", water: "Экстремальная", workability: "Литая" },
+  { b: 75, use: "Опорные элементы мостов", frost: "Экстремальная", water: "Экстремальная", workability: "Литая" },
+  { b: 80, use: "Особопрочные конструкции", frost: "Экстремальная", water: "Экстремальная", workability: "Литая" },
+  { b: 85, use: "Усиленные спецобъекты", frost: "Экстремальная", water: "Экстремальная", workability: "Литая" },
+  { b: 90, use: "Экстремальные нагрузки", frost: "Экстремальная", water: "Экстремальная", workability: "Литая" },
 ];
 
 const strengthFactor = 1.315;
@@ -176,13 +176,20 @@ const classes = classDefs.map((item) => ({
   code: `B${item.b}`,
   strength: Number((item.b * strengthFactor).toFixed(1)),
   use: item.use,
+  frost: item.frost,
+  water: item.water,
+  workability: item.workability,
 }));
 
+const layout = document.querySelector(".layout");
 const grid = document.getElementById("classGrid");
 const detailPanel = document.getElementById("detailPanel");
 const detailCode = document.getElementById("detailCode");
 const detailStrength = document.getElementById("detailStrength");
 const detailUse = document.getElementById("detailUse");
+const detailFrost = document.getElementById("detailFrost");
+const detailWater = document.getElementById("detailWater");
+const detailWorkability = document.getElementById("detailWorkability");
 const loadValue = document.getElementById("loadValue");
 const progressBar = document.getElementById("progressBar");
 const cube = document.getElementById("cube");
@@ -191,6 +198,7 @@ const result = document.getElementById("result");
 const comparisons = document.getElementById("comparisons");
 const comparisonButtons = document.getElementById("comparisonButtons");
 const comparisonOutput = document.getElementById("comparisonOutput");
+detailPanel.setAttribute("aria-hidden", "true");
 
 const gravity = 9.81;
 const calcPressure = (massKg, areaM2) => (massKg * gravity) / areaM2 / 1e6;
@@ -460,6 +468,15 @@ const renderTrades = (strength) => {
   });
 };
 
+const revealDetailPanel = () => {
+  layout.classList.add("panel-open");
+  detailPanel.classList.add("is-open");
+  detailPanel.setAttribute("aria-hidden", "false");
+  detailPanel.classList.remove("is-animate");
+  void detailPanel.offsetWidth;
+  detailPanel.classList.add("is-animate");
+};
+
 const selectClass = (index) => {
   selectedIndex = index;
   const item = classes[index];
@@ -470,7 +487,10 @@ const selectClass = (index) => {
   detailCode.textContent = item.code;
   detailStrength.textContent = item.strength.toFixed(1);
   detailUse.textContent = item.use;
-  detailPanel.classList.add("is-open");
+  detailFrost.textContent = item.frost;
+  detailWater.textContent = item.water;
+  detailWorkability.textContent = item.workability;
+  revealDetailPanel();
   testButton.disabled = false;
   resetTestState();
   renderTrades(item.strength);
